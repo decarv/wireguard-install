@@ -61,6 +61,8 @@ function checkOS() {
 		OS=oracle
 	elif [[ -e /etc/arch-release ]]; then
 		OS=arch
+        elif [[ ${OS} == "sles" || ${OS} == "opensuse-tumbleweed" ]]; then
+		OS=suse
 	else
 		echo "Looks like you aren't running this installer on a Debian, Ubuntu, Fedora, CentOS, AlmaLinux, Oracle or Arch Linux system"
 		exit 1
@@ -204,6 +206,8 @@ function installWireGuard() {
 		dnf install -y wireguard-tools qrencode iptables
 	elif [[ ${OS} == 'arch' ]]; then
 		pacman -S --needed --noconfirm wireguard-tools qrencode
+        elif [[ ${OS} == 'suse' ]]; then
+                zypper in --no-confirm wireguard-tools qrencode
 	fi
 
 	# Make sure the directory exists (this does not seem the be the case on fedora)
@@ -458,6 +462,10 @@ function uninstallWg() {
 			yum remove --noautoremove wireguard-tools qrencode
 		elif [[ ${OS} == 'arch' ]]; then
 			pacman -Rs --noconfirm wireguard-tools qrencode
+		elif [[ ${OS} == '' ]]; then
+			pacman -Rs --noconfirm wireguard-tools qrencode
+                elif [[ ${OS} == 'suse' ]]; then
+                        zypper rm --no-confirm wireguard-tools qrencode
 		fi
 
 		rm -rf /etc/wireguard
